@@ -1,0 +1,16 @@
+refresh-rate=60
+width=288
+height=512
+bird-animation-interval=5
+bird-color=red
+bird-fly-height=8
+background-speed=1
+time=day
+base-speed=3
+base-height=400
+pipe-color=green
+pipe-interval=120
+pipe-bound= 50
+pipe-spawn-rate=120
+gravity=0.3
+speed-buffer=0.02
