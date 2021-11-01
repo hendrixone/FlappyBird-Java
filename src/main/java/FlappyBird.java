@@ -69,7 +69,7 @@ public class FlappyBird extends JPanel{
         //创建鼠标对象
         MouseAdapter mouseAdapter = new MouseAdapter() {
             @Override
-            public void mouseClicked(MouseEvent e) {
+            public void mousePressed(MouseEvent e) {
                 if(gameState == STARTING){
                     gameState = RUNNING;
                 }
