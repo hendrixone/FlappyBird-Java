@@ -175,7 +175,11 @@ class Bird extends GameObject{
     }
 
     void fly(){
-        speed = -birdFlyHeight;
+        if(this.getRectangle().getHeight() <= FlappyBird.frameHeight) {
+            speed = -birdFlyHeight;
+        }else{
+            System.out.println(123);
+        }
     }
 
     void act(){

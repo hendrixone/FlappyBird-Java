@@ -43,10 +43,15 @@ public class FlappyBird extends JPanel{
 
     private LinkedList<GameObject> drawingQueue = new LinkedList<>();
 
+    /**
+     * @throws InterruptedException
+     */
     private void action() throws InterruptedException {
+        //初始化
         ticks = 0;
         gameState = STARTING;
 
+        //创建窗口
         frameWidth = Integer.parseInt(properties.getProperty("width"));
         frameHeight = Integer.parseInt(properties.getProperty("height"));
         pipeSpawnRate = Integer.parseInt(properties.getProperty("pipe-spawn-rate"));
@@ -61,6 +66,7 @@ public class FlappyBird extends JPanel{
         gameOver = new GameOver((frameWidth - GameOver.image.getWidth()) / 2, (frameHeight - GameOver.image.getHeight()) / 2);
         pipes = new LinkedList<>();
 
+        //创建鼠标对象
         MouseAdapter mouseAdapter = new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -78,19 +84,25 @@ public class FlappyBird extends JPanel{
                 }
             }
         };
+        //监听鼠标对象
         this.addMouseListener(mouseAdapter);
 
         //游戏主循环
         long cycleTime;
         int cycleInterval = (1000 / Integer.parseInt(properties.getProperty("refresh-rate")));
         while (true){
-            ticks++;
-            long startTime = System.nanoTime();
-            run();
-            repaint();
-            cycleTime = (System.nanoTime() - startTime) / 1000000;
-            if((cycleInterval - cycleTime) > 0){
-                Thread.sleep(cycleInterval - cycleTime);
+            try {
+                ticks++;
+                long startTime = System.nanoTime();
+                run();
+                repaint();
+                //根据每tick时间差暂停线程，保持以60tick每秒运行
+                cycleTime = (System.nanoTime() - startTime) / 1000000;
+                if ((cycleInterval - cycleTime) > 0) {
+                    Thread.sleep(cycleInterval - cycleTime);
+                }
+            }catch(InterruptedException e){
+                e.printStackTrace();
             }
         }
     }
@@ -113,9 +125,11 @@ public class FlappyBird extends JPanel{
                 score.setScore(score.getScore() + 1);
             }
             bird.act();
+            //判断是否撞击地面
             if(bird.getRectangle().intersects(base.getRectangle())){
                 gameState = ENDING;
             }
+            //枚举管道，判断是否撞击
             for (Pipe pipe : pipes){
                 if(bird.getRectangle().intersects(pipe.getRectangle())){
                     gameState = ENDING;
@@ -126,12 +140,10 @@ public class FlappyBird extends JPanel{
                 base.act();
                 backGround.act();
                 if(!pipes.isEmpty()) {
-                    for (GameObject pipe : pipes) {
-                        ((Pipe) pipe).act();
-                    }
-                    if (pipes.peekFirst() != null && pipes.peekFirst().isOffBound()) {
+                    for (Pipe pipe : pipes)
+                        pipe.act();
+                    if (pipes.peekFirst() != null && pipes.peekFirst().isOffBound())
                         pipes.removeFirst();
-                    }
                 }
             }
             drawingQueue.add(backGround);
